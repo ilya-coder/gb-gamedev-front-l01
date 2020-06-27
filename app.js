@@ -64,8 +64,8 @@ class Square {
     drawX() {
         const ctx = this.ctx
 
-        ctx.translate(15, 85)
         ctx.save()
+        ctx.translate(15, 85)
         ctx.scale(10, 10)
         ctx.fillText('X', 0, 0)
         ctx.restore()
@@ -74,8 +74,8 @@ class Square {
     drawZero() {
         const ctx = this.ctx
 
-        ctx.translate(25, 85)
         ctx.save()
+        ctx.translate(25, 85)
         ctx.scale(10, 10)
         ctx.fillText('0', 0, 0)
         ctx.restore()
