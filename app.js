@@ -9,7 +9,6 @@ canvas.height = 300
 app.append( canvas )
 
 const ctx = canvas.getContext( '2d' )
-let RAF
 
 class Square {
     constructor(x, y, sideWidth, ctx) {
@@ -212,6 +211,7 @@ class Field {
      * @returns {void}
      */
     drawMsg(message){
+        console.log(`drawMsg(message = "${message}")`)
         const ctx = this.ctx
 
         ctx.save()
@@ -311,16 +311,12 @@ function render() {
 
     if (gameField.status === 'win') {
         gameField.drawMsg('YOU WIN!')
-        console.log('Победили человеки :-(')
-        cancelAnimationFrame(RAF)
     } else if (gameField.status === 'loose') {
         gameField.drawMsg('YOU LOOSE')
-        console.log('Победил сверхразум :-)')
-        cancelAnimationFrame(RAF)
     } else if (gameField.status === 'draw') {
         gameField.drawMsg('DRAW')
-        console.log('Ничья :-|')
-        cancelAnimationFrame(RAF)
+    } else {
+        return true
     }
 }
 
@@ -346,8 +342,9 @@ function canvasClick(event) {
 }
 
 function gameLoop() {
-    render()
-    RAF = requestAnimationFrame( gameLoop )
+    if (render()) {
+        requestAnimationFrame( gameLoop )
+    }
 }
 
 gameLoop()
