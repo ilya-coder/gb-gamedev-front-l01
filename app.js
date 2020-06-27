@@ -26,10 +26,18 @@ class Square {
      * @returns {boolean} true - клик по данному объекту, false - мимо
      */
     isClick(x, y) {
-        return x >= this.x
+        const itsMe = x >= this.x
             && x <= this.x + this.sideWidth
             && y >= this.y
             && y <= this.y + this.sideWidth;
+
+        if (itsMe && this.status !== '') {
+            const err = new Error('Square already busy')
+            err.code = 'CLICKBUSY'
+            throw err
+        }
+
+        return itsMe
     }
 
     /**
@@ -40,8 +48,12 @@ class Square {
      * @returns {void}
      */
     onCLick(x, y, status){
-        if ( this.isClick(x,y) ) {
-            this.status = status
+        try {
+            if ( this.isClick(x,y) ) {
+                this.status = status
+            }
+        } catch (e) {
+            throw e
         }
     }
 
@@ -165,7 +177,11 @@ class Field {
      * @returns {void}
      */
     onClick(x, y) {
-        this.squares.map( sq => sq.onCLick(x, y, 'x') )
+        try {
+            this.squares.map( sq => sq.onCLick(x, y, 'x') )
+        } catch (e) {
+            throw e
+        }
     }
 
     /**
@@ -322,10 +338,10 @@ function render() {
 
 function canvasClick(event) {
     const {offsetX, offsetY} = event
+
     gameField.onClick(offsetX, offsetY)
 
     if (gameField.checkWinStatus('x')) {
-        canvas.removeEventListener('click', canvasClick)
         gameField.status = 'win'
         return
     }
@@ -333,11 +349,13 @@ function canvasClick(event) {
     gameField.doComp()
 
     if (gameField.checkWinStatus('0')) {
-        canvas.removeEventListener('click', canvasClick)
         gameField.status = 'loose'
     } else if (gameField.isDraw()) {
-        canvas.removeEventListener('click', canvasClick)
         gameField.status = 'draw'
+    }
+
+    if (gameField.status !== 'inGame') {
+        canvas.removeEventListener('click', canvasClick)
     }
 }
 
