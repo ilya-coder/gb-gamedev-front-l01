@@ -284,22 +284,34 @@ class Field {
             }
         }
 
+        let maxCnt = 0
+        let bestIndex = 0
         // Если есть возможность выйграть в 2 хода
         for (const indexA of freeIndexes) {
+            let counter = 0
             for (const indexB of freeIndexes) {
                 if ( indexA === indexB ) {
                     continue
                 }
 
                 if (this.checkWinStatus('0', [indexA, indexB])) {
-                    console.log(`Найден вероятно выйгрышный индекс ${indexA}`)
-                    this.squares[ indexA ].status = '0'
-                    return
+                    counter++
                 }
+            }
+            if ( counter > maxCnt ) {
+                maxCnt = counter
+                bestIndex = indexA
             }
         }
 
+        if (maxCnt > 0) {
+            console.log(`Вероятно лучший ход на индекс ${bestIndex} (вариантов ходов: ${maxCnt})`)
+            this.squares[ bestIndex ].status = '0'
+            return
+        }
+
         // Ставим наугад в свободную
+        console.log('Хожу наугад')
         this.squares[ freeIndexes[ Math.round(Math.random() * 9999) % freeIndexes.length ] ].status = '0'
     }
 
