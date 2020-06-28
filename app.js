@@ -355,6 +355,7 @@ function canvasClick(event) {
 
     if (gameField.checkWinStatus('x')) {
         gameField.status = 'win'
+        canvas.removeEventListener('click', canvasClick)
         return
     }
 
